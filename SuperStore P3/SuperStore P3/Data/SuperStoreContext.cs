@@ -8,13 +8,16 @@ namespace Data
 {
     public partial class SuperStoreContext : DbContext
     {
+        private readonly IConfiguration _configuration;
+
         public SuperStoreContext()
         {
         }
 
-        public SuperStoreContext(DbContextOptions<SuperStoreContext> options)
+        public SuperStoreContext(DbContextOptions<SuperStoreContext> options, IConfiguration configuration)
             : base(options)
         {
+            _configuration = configuration;
         }
 
         public virtual DbSet<Customer> Customers { get; set; } = null!;
@@ -26,8 +29,8 @@ namespace Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Data Source=zaazrsqlcmpg323.database.windows.net;Initial Catalog=zaazrcmpg323;User ID=cmpg323_sa;Password=b3JBzCX08xvUfYg196lM!;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+                string connectionString = _configuration.GetConnectionString("DefaultConnection");
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 
