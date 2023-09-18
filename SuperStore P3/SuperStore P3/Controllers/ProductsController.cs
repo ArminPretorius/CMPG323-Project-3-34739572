@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Data;
 using Models;
+using EcoPower_Logistics.Repository;
 
 namespace Controllers
 {
@@ -24,27 +25,28 @@ namespace Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            return _context.Products != null ?
-                        View(await _context.Products.ToListAsync()) :
-                        Problem("Entity set 'SuperStoreContext.Products'  is null.");
+            ProductsRepository productsRepository = new ProductsRepository();
+
+            var results = productsRepository.GetAll();
+
+            return View(results);
         }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+            ProductsRepository productsRepository = new ProductsRepository();
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
+            if (id != null)
             {
-                return NotFound();
-            }
+                var result = productsRepository.GetById(id.Value);
 
-            return View(product);
+                return View(result);
+            }
+            else
+            { 
+                return View(null); 
+            }
         }
 
         // GET: Products/Create
@@ -62,8 +64,8 @@ namespace Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                ProductsRepository productsRepository = new ProductsRepository();
+                productsRepository.Add(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -72,17 +74,18 @@ namespace Controllers
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+            ProductsRepository productsRepository = new ProductsRepository();
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            if (id != null)
             {
-                return NotFound();
+                var result = productsRepository.GetById(id.Value);
+
+                return View(result);
             }
-            return View(product);
+            else
+            {
+                return View(null);
+            }
         }
 
         // POST: Products/Edit/5
@@ -101,8 +104,8 @@ namespace Controllers
             {
                 try
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
+                    ProductsRepository productsRepository = new ProductsRepository();
+                    productsRepository.Update(product);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -123,19 +126,18 @@ namespace Controllers
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+            ProductsRepository productsRepository = new ProductsRepository();
 
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
+            if (id != null)
             {
-                return NotFound();
-            }
+                var result = productsRepository.GetById(id.Value);
 
-            return View(product);
+                return View(result);
+            }
+            else
+            {
+                return View(null);
+            }
         }
 
         // POST: Products/Delete/5
@@ -143,23 +145,25 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Products == null)
-            {
-                return Problem("Entity set 'SuperStoreContext.Products'  is null.");
-            }
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-
-            await _context.SaveChangesAsync();
+            ProductsRepository productsRepository = new ProductsRepository();
+            var product = productsRepository.GetById(id);
+            productsRepository.Delete(product);
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-            return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
+            ProductsRepository productsRepository = new ProductsRepository();
+            var result = productsRepository.GetById(id);
+
+            if (result != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }   
         }
     }
 }

@@ -8,16 +8,14 @@ namespace Data
 {
     public partial class SuperStoreContext : DbContext
     {
-        private readonly IConfiguration _configuration;
 
         public SuperStoreContext()
         {
         }
 
-        public SuperStoreContext(DbContextOptions<SuperStoreContext> options, IConfiguration configuration)
+        public SuperStoreContext(DbContextOptions<SuperStoreContext> options)
             : base(options)
         {
-            _configuration = configuration;
         }
 
         public virtual DbSet<Customer> Customers { get; set; } = null!;
@@ -29,7 +27,10 @@ namespace Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                string connectionString = _configuration.GetConnectionString("DefaultConnection");
+                IConfigurationRoot configuration = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json")
+                .Build();
+                string connectionString = configuration.GetConnectionString("DefaultConnection");
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
