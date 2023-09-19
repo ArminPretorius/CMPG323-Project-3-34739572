@@ -15,13 +15,6 @@ namespace Controllers
     [Authorize]
     public class OrdersController : Controller
     {
-        private readonly SuperStoreContext _context;
-
-        public OrdersController(SuperStoreContext context)
-        {
-            _context = context;
-        }
-
         // GET: Orders
         public async Task<IActionResult> Index()
         {
@@ -66,31 +59,40 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderId,OrderDate,CustomerId,DeliveryAddress")] Order order)
         {
+            CustomersRepository customersRepository = new CustomersRepository();
+            var customers = customersRepository.GetAll();
+
             if (ModelState.IsValid)
             {
-                _context.Add(order);
-                await _context.SaveChangesAsync();
+                OrdersRepository ordersRepository = new OrdersRepository();
+                ordersRepository.Add(order);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", order.CustomerId);
+
+            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
             return View(order);
         }
 
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Orders == null)
-            {
-                return NotFound();
-            }
+            OrdersRepository ordersRepository = new OrdersRepository();
 
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
+            if (id != null)
             {
-                return NotFound();
+                var result = ordersRepository.GetById(id.Value);
+
+                //Get the list of customers
+                CustomersRepository customersRepository = new CustomersRepository();
+                var customers = customersRepository.GetAll();
+                ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
+
+                return View(result);
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", order.CustomerId);
-            return View(order);
+            else
+            {
+                return View(null);
+            }
         }
 
         // POST: Orders/Edit/5
@@ -100,52 +102,35 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderDate,CustomerId,DeliveryAddress")] Order order)
         {
-            if (id != order.OrderId)
-            {
-                return NotFound();
-            }
+            CustomersRepository customersRepository = new CustomersRepository();
+            var customers = customersRepository.GetAll();
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrderExists(order.OrderId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                OrdersRepository ordersRepository = new OrdersRepository();
+                ordersRepository.Update(order);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId", order.CustomerId);
+
+            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
             return View(order);
         }
 
         // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Orders == null)
-            {
-                return NotFound();
-            }
+            OrdersRepository ordersRepository = new OrdersRepository();
 
-            var order = await _context.Orders
-                .Include(o => o.Customer)
-                .FirstOrDefaultAsync(m => m.OrderId == id);
-            if (order == null)
+            if (id != null)
             {
-                return NotFound();
-            }
+                var result = ordersRepository.GetById(id.Value);
 
-            return View(order);
+                return View(result);
+            }
+            else
+            {
+                return View(null);
+            }
         }
 
         // POST: Orders/Delete/5
@@ -153,23 +138,24 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Orders == null)
-            {
-                return Problem("Entity set 'SuperStoreContext.Orders'  is null.");
-            }
-            var order = await _context.Orders.FindAsync(id);
-            if (order != null)
-            {
-                _context.Orders.Remove(order);
-            }
-
-            await _context.SaveChangesAsync();
+            OrdersRepository ordersRepository = new OrdersRepository();
+            var order = ordersRepository.GetById(id);
+            ordersRepository.Delete(order);
             return RedirectToAction(nameof(Index));
         }
 
         private bool OrderExists(int id)
         {
-            return (_context.Orders?.Any(e => e.OrderId == id)).GetValueOrDefault();
+            OrdersRepository ordersRepository = new OrdersRepository();
+            var order = ordersRepository.GetById(id);
+            if (order != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

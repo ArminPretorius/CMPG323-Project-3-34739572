@@ -15,13 +15,6 @@ namespace Controllers
     [Authorize]
     public class CustomersController : Controller
     {
-        private readonly SuperStoreContext _context;
-
-        public CustomersController(SuperStoreContext context)
-        {
-            _context = context;
-        }
-
         // GET: Customers
         public async Task<IActionResult> Index()
         {

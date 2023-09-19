@@ -15,13 +15,6 @@ namespace Controllers
     [Authorize]
     public class ProductsController : Controller
     {
-        private readonly SuperStoreContext _context;
-
-        public ProductsController(SuperStoreContext context)
-        {
-            _context = context;
-        }
-
         // GET: Products
         public async Task<IActionResult> Index()
         {

@@ -22,5 +22,17 @@ namespace EcoPower_Logistics.Repository
             _context.Add(order);
             _context.SaveChanges();
         }
+
+        public void Update(Order order)
+        {
+            _context.Update(order);
+            _context.SaveChanges();
+        }
+
+        public void Delete(Order order)
+        {
+            _context.Remove(order);
+            _context.SaveChanges();
+        }
     }
 }
