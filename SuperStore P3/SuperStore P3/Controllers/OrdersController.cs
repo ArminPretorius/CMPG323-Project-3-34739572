@@ -9,46 +9,50 @@ using Microsoft.EntityFrameworkCore;
 using Models;
 using Data;
 using EcoPower_Logistics.Repository;
+using EcoPower_Logistics.Services;
 
 namespace Controllers
 {
     [Authorize]
     public class OrdersController : Controller
     {
+        private readonly IOrdersService _ordersService;
+        private readonly ICustomersService _customersService;
+        private readonly IProductsService _productsService;
+
+        public OrdersController(IOrdersService ordersService, ICustomersService customersService)
+        {
+            this._ordersService = ordersService;
+            this._customersService = customersService;
+        }
+
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            OrdersRepository ordersRepository = new OrdersRepository();
-
-            var results = ordersRepository.GetAllOrders();
-
-            return View(results);
+            return View(_ordersService.GetAllOrders().ToList());
         }
 
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            OrdersRepository ordersRepository = new OrdersRepository();
-
             if (id != null)
             {
-                var result = ordersRepository.GetOrderById(id.Value);
+                var result = _ordersService.GetOrderById(id.Value);
 
                 return View(result);
             }
             else
             {
-                return View(null);
+                return NotFound();
             }
         }
 
         // GET: Orders/Create
         public IActionResult Create()
         {
-            //Get the list of customers
-            CustomersRepository customersRepository = new CustomersRepository();
-            var customers = customersRepository.GetAllCustomers();
+            var customers = _customersService.GetAllCustomers();
             ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
+
             return View();
         }
 
@@ -59,39 +63,25 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderId,OrderDate,CustomerId,DeliveryAddress")] Order order)
         {
-            CustomersRepository customersRepository = new CustomersRepository();
-            var customers = customersRepository.GetAllCustomers();
-
-            if (ModelState.IsValid)
-            {
-                OrdersRepository ordersRepository = new OrdersRepository();
-                ordersRepository.Add(order);
-                return RedirectToAction(nameof(Index));
-            }
-
-            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
-            return View(order);
+            _ordersService.AddOrder(order);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Orders/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            OrdersRepository ordersRepository = new OrdersRepository();
+            var customers = _customersService.GetAllCustomers();
+            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
 
             if (id != null)
             {
-                var result = ordersRepository.GetOrderById(id.Value);
-
-                //Get the list of customers
-                CustomersRepository customersRepository = new CustomersRepository();
-                var customers = customersRepository.GetAll();
-                ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
+                var result = _ordersService.GetOrderById(id.Value);
 
                 return View(result);
             }
             else
             {
-                return View(null);
+                return NotFound();
             }
         }
 
@@ -102,34 +92,28 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderDate,CustomerId,DeliveryAddress")] Order order)
         {
-            CustomersRepository customersRepository = new CustomersRepository();
-            var customers = customersRepository.GetAll();
-
-            if (ModelState.IsValid)
+            if (id != order.OrderId)
             {
-                OrdersRepository ordersRepository = new OrdersRepository();
-                ordersRepository.Update(order);
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
 
-            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
-            return View(order);
+            _ordersService.UpdateOrder(order);
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Orders/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            OrdersRepository ordersRepository = new OrdersRepository();
-
             if (id != null)
             {
-                var result = ordersRepository.GetOrderById(id.Value);
+                var result = _ordersService.GetOrderById(id.Value);
 
                 return View(result);
             }
             else
             {
-                return View(null);
+                return NotFound();
             }
         }
 
@@ -138,24 +122,14 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            OrdersRepository ordersRepository = new OrdersRepository();
-            var order = ordersRepository.GetOrderById(id);
-            ordersRepository.Delete(order);
+            var order = _ordersService.GetOrderById(id);
+            _ordersService.DeleteOrder(order);
             return RedirectToAction(nameof(Index));
         }
 
         private bool OrderExists(int id)
         {
-            OrdersRepository ordersRepository = new OrdersRepository();
-            var order = ordersRepository.GetOrderById(id);
-            if (order != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return _ordersService.GetAllOrders().Any(e => e.CustomerId == id);
         }
     }
 }
