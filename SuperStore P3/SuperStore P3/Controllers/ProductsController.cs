@@ -20,7 +20,7 @@ namespace Controllers
         {
             ProductsRepository productsRepository = new ProductsRepository();
 
-            var results = productsRepository.GetAll();
+            var results = productsRepository.GetAllProducts();
 
             return View(results);
         }
@@ -32,7 +32,7 @@ namespace Controllers
 
             if (id != null)
             {
-                var result = productsRepository.GetById(id.Value);
+                var result = productsRepository.GetProductById(id.Value);
 
                 return View(result);
             }
@@ -71,7 +71,7 @@ namespace Controllers
 
             if (id != null)
             {
-                var result = productsRepository.GetById(id.Value);
+                var result = productsRepository.GetProductById(id.Value);
 
                 return View(result);
             }
@@ -123,7 +123,7 @@ namespace Controllers
 
             if (id != null)
             {
-                var result = productsRepository.GetById(id.Value);
+                var result = productsRepository.GetProductById(id.Value);
 
                 return View(result);
             }
@@ -139,7 +139,7 @@ namespace Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             ProductsRepository productsRepository = new ProductsRepository();
-            var product = productsRepository.GetById(id);
+            var product = productsRepository.GetProductById(id);
             productsRepository.Delete(product);
             return RedirectToAction(nameof(Index));
         }
@@ -147,7 +147,7 @@ namespace Controllers
         private bool ProductExists(int id)
         {
             ProductsRepository productsRepository = new ProductsRepository();
-            var result = productsRepository.GetById(id);
+            var result = productsRepository.GetProductById(id);
 
             if (result != null)
             {

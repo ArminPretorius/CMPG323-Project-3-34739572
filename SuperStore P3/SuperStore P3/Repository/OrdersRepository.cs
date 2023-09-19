@@ -3,36 +3,31 @@ using Models;
 
 namespace EcoPower_Logistics.Repository
 {
-    public class OrdersRepository
+    public class OrdersRepository : GenericRepository<Order>, IOrdersRepository
     {
-        protected readonly SuperStoreContext _context = new SuperStoreContext();
-
-        public IEnumerable<Order> GetAll()
+        public IEnumerable<Order> GetAllOrders()
         {
-            return _context.Orders.ToList();
+            return GetAll().ToList();
         }
 
-        public Order GetById(int id)
+        public Order GetOrderById(int id)
         {
-            return _context.Orders.FirstOrDefault(x => x.OrderId == id);
+            return GetAll().FirstOrDefault(x => x.OrderId == id);
         }
 
-        public void Add(Order order)
+        public void AddOrder(Order entity)
         {
-            _context.Add(order);
-            _context.SaveChanges();
+            Add(entity);
         }
 
-        public void Update(Order order)
+        public void UpdateOrder(Order entity)
         {
-            _context.Update(order);
-            _context.SaveChanges();
+            Update(entity);
         }
 
-        public void Delete(Order order)
+        public void DeleteOrder(Order entity)
         {
-            _context.Remove(order);
-            _context.SaveChanges();
+            Delete(entity);
         }
     }
 }

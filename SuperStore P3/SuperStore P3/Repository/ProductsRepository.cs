@@ -1,39 +1,35 @@
 ﻿using Data;
 using EcoPower_Logistics.Data;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Models;
 
 namespace EcoPower_Logistics.Repository
 {
-    public class ProductsRepository
+    public class ProductsRepository : GenericRepository<Product>, IProductsRepository
     {
-        protected readonly SuperStoreContext _context = new SuperStoreContext();
-
-        public IEnumerable<Product> GetAll()
+        public IEnumerable<Product> GetAllProducts()
         {
-            return _context.Products.ToList();
+            return GetAll().ToList();
         }
 
-        public Product GetById(int id)
+        public Product GetProductById(int id)
         {
-            return _context.Products.FirstOrDefault(x => x.ProductId == id);
+            return GetAll().FirstOrDefault(x => x.ProductId == id);
         }
 
-        public void Add(Product product)
+        public void AddProduct(Product entity)
         {
-            _context.Add(product);
-            _context.SaveChanges();
+            Add(entity);
         }
 
-        public void Update(Product product)
+        public void UpdateProduct(Product entity)
         {
-            _context.Update(product);
-            _context.SaveChanges();
+            Update(entity);
         }
 
-        public void Delete(Product product)
+        public void DeleteProduct(Product entity)
         {
-            _context.Remove(product);
-            _context.SaveChanges();
+            Delete(entity);
         }
     }
 }

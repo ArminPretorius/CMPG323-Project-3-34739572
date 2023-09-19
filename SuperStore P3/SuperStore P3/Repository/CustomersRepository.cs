@@ -3,36 +3,31 @@ using Models;
 
 namespace EcoPower_Logistics.Repository
 {
-    public class CustomersRepository
+    public class CustomersRepository : GenericRepository<Customer>, ICustomersRepository
     {
-        protected readonly SuperStoreContext _context = new SuperStoreContext();
-
-        public IEnumerable<Customer> GetAll()
+        public IEnumerable<Customer> GetAllCustomers()
         {
-            return _context.Customers.ToList();
+            return GetAll().ToList();
         }
 
-        public Customer GetById(int id)
+        public Customer GetCustomerById(int id)
         {
-            return _context.Customers.FirstOrDefault(x => x.CustomerId == id);
+            return GetAll().FirstOrDefault(x => x.CustomerId == id);
         }
 
-        public void Add(Customer customer)
+        public void AddCustomer(Customer entity)
         {
-            _context.Add(customer);
-            _context.SaveChanges();
+            Add(entity);
         }
 
-        public void Update(Customer customer)
+        public void UpdateCustomer(Customer entity)
         {
-            _context.Update(customer);
-            _context.SaveChanges();
+            Update(entity);
         }
 
-        public void Delete(Customer customer)
+        public void DeleteCustomer(Customer entity)
         {
-            _context.Remove(customer);
-            _context.SaveChanges();
+            Delete(entity);
         }
     }
 }
