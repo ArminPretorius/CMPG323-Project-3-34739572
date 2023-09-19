@@ -20,7 +20,7 @@ namespace Controllers
         {
             OrdersRepository ordersRepository = new OrdersRepository();
 
-            var results = ordersRepository.GetAll();
+            var results = ordersRepository.GetAllOrders();
 
             return View(results);
         }
@@ -32,7 +32,7 @@ namespace Controllers
 
             if (id != null)
             {
-                var result = ordersRepository.GetById(id.Value);
+                var result = ordersRepository.GetOrderById(id.Value);
 
                 return View(result);
             }
@@ -47,7 +47,7 @@ namespace Controllers
         {
             //Get the list of customers
             CustomersRepository customersRepository = new CustomersRepository();
-            var customers = customersRepository.GetAll();
+            var customers = customersRepository.GetAllCustomers();
             ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
             return View();
         }
@@ -60,7 +60,7 @@ namespace Controllers
         public async Task<IActionResult> Create([Bind("OrderId,OrderDate,CustomerId,DeliveryAddress")] Order order)
         {
             CustomersRepository customersRepository = new CustomersRepository();
-            var customers = customersRepository.GetAll();
+            var customers = customersRepository.GetAllCustomers();
 
             if (ModelState.IsValid)
             {
@@ -80,7 +80,7 @@ namespace Controllers
 
             if (id != null)
             {
-                var result = ordersRepository.GetById(id.Value);
+                var result = ordersRepository.GetOrderById(id.Value);
 
                 //Get the list of customers
                 CustomersRepository customersRepository = new CustomersRepository();
@@ -123,7 +123,7 @@ namespace Controllers
 
             if (id != null)
             {
-                var result = ordersRepository.GetById(id.Value);
+                var result = ordersRepository.GetOrderById(id.Value);
 
                 return View(result);
             }
@@ -139,7 +139,7 @@ namespace Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             OrdersRepository ordersRepository = new OrdersRepository();
-            var order = ordersRepository.GetById(id);
+            var order = ordersRepository.GetOrderById(id);
             ordersRepository.Delete(order);
             return RedirectToAction(nameof(Index));
         }
@@ -147,7 +147,7 @@ namespace Controllers
         private bool OrderExists(int id)
         {
             OrdersRepository ordersRepository = new OrdersRepository();
-            var order = ordersRepository.GetById(id);
+            var order = ordersRepository.GetOrderById(id);
             if (order != null)
             {
                 return true;

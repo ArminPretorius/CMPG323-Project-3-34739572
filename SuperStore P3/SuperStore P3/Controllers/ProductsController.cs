@@ -9,36 +9,38 @@ using Microsoft.EntityFrameworkCore;
 using Data;
 using Models;
 using EcoPower_Logistics.Repository;
+using EcoPower_Logistics.Services; 
 
 namespace Controllers
 {
     [Authorize]
     public class ProductsController : Controller
     {
+        private readonly IProductsService _productsService;
+
+        public ProductsController(IProductsService productsService)
+        {
+            this._productsService = productsService;
+        }
+
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            ProductsRepository productsRepository = new ProductsRepository();
-
-            var results = productsRepository.GetAllProducts();
-
-            return View(results);
+            return View(_productsService.GetAllProducts().ToList());
         }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            ProductsRepository productsRepository = new ProductsRepository();
-
             if (id != null)
             {
-                var result = productsRepository.GetProductById(id.Value);
+                var result = _productsService.GetProductById(id.Value);
 
                 return View(result);
             }
             else
-            { 
-                return View(null); 
+            {
+                return NotFound();
             }
         }
 
@@ -55,29 +57,22 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDescription,UnitsInStock")] Product product)
         {
-            if (ModelState.IsValid)
-            {
-                ProductsRepository productsRepository = new ProductsRepository();
-                productsRepository.Add(product);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(product);
+            _productsService.AddProduct(product);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            ProductsRepository productsRepository = new ProductsRepository();
-
             if (id != null)
             {
-                var result = productsRepository.GetProductById(id.Value);
+                var result = _productsService.GetProductById(id.Value);
 
                 return View(result);
             }
             else
             {
-                return View(null);
+                return NotFound();
             }
         }
 
@@ -95,22 +90,7 @@ namespace Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    ProductsRepository productsRepository = new ProductsRepository();
-                    productsRepository.Update(product);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.ProductId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _productsService.UpdateProduct(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -119,17 +99,15 @@ namespace Controllers
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            ProductsRepository productsRepository = new ProductsRepository();
-
             if (id != null)
             {
-                var result = productsRepository.GetProductById(id.Value);
+                var result = _productsService.GetProductById(id.Value);
 
                 return View(result);
             }
             else
             {
-                return View(null);
+                return NotFound();
             }
         }
 
@@ -138,25 +116,14 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            ProductsRepository productsRepository = new ProductsRepository();
-            var product = productsRepository.GetProductById(id);
-            productsRepository.Delete(product);
+            var product = _productsService.GetProductById(id);
+            _productsService.DeleteProduct(product);
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-            ProductsRepository productsRepository = new ProductsRepository();
-            var result = productsRepository.GetProductById(id);
-
-            if (result != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }   
+            return _productsService.GetAllProducts().Any(e => e.ProductId == id);
         }
     }
 }
