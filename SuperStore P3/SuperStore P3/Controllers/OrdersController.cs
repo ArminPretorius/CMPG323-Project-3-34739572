@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Data;
+using EcoPower_Logistics.Repository;
 
 namespace Controllers
 {
@@ -24,33 +25,37 @@ namespace Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var superStoreContext = _context.Orders.Include(o => o.Customer);
-            return View(await superStoreContext.ToListAsync());
+            OrdersRepository ordersRepository = new OrdersRepository();
+
+            var results = ordersRepository.GetAll();
+
+            return View(results);
         }
 
         // GET: Orders/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Orders == null)
-            {
-                return NotFound();
-            }
+            OrdersRepository ordersRepository = new OrdersRepository();
 
-            var order = await _context.Orders
-                .Include(o => o.Customer)
-                .FirstOrDefaultAsync(m => m.OrderId == id);
-            if (order == null)
+            if (id != null)
             {
-                return NotFound();
-            }
+                var result = ordersRepository.GetById(id.Value);
 
-            return View(order);
+                return View(result);
+            }
+            else
+            {
+                return View(null);
+            }
         }
 
         // GET: Orders/Create
         public IActionResult Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customers, "CustomerId", "CustomerId");
+            //Get the list of customers
+            CustomersRepository customersRepository = new CustomersRepository();
+            var customers = customersRepository.GetAll();
+            ViewData["CustomerId"] = new SelectList(customers, "CustomerId", "CustomerId");
             return View();
         }
 
