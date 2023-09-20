@@ -8,43 +8,42 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Data;
 using Models;
+using EcoPower_Logistics.Repository;
+using EcoPower_Logistics.Services;
 
 namespace Controllers
 {
     [Authorize]
     public class CustomersController : Controller
     {
-        private readonly SuperStoreContext _context;
+        //Declares the service that will be used by the controller
+        private readonly ICustomersService _customersService;
 
-        public CustomersController(SuperStoreContext context)
+        //Constructor that will be used to inject the service into the controller
+        public CustomersController(ICustomersService customersService)
         {
-            _context = context;
+            this._customersService = customersService;
         }
 
         // GET: Customers
         public async Task<IActionResult> Index()
         {
-            return _context.Customers != null ?
-                        View(await _context.Customers.ToListAsync()) :
-                        Problem("Entity set 'SuperStoreContext.Customers'  is null.");
+            return View(_customersService.GetAllCustomers().ToList());
         }
 
         // GET: Customers/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Customers == null)
+            if (id != null)
+            {
+                var result = _customersService.GetCustomerById(id.Value);
+
+                return View(result);
+            }
+            else
             {
                 return NotFound();
             }
-
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
         }
 
         // GET: Customers/Create
@@ -54,40 +53,30 @@ namespace Controllers
         }
 
         // POST: Customers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CustomerId,CustomerTitle,CustomerName,CustomerSurname,CellPhone")] Customer customer)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(customer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(customer);
+            _customersService.AddCustomer(customer);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Customers/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Customers == null)
+            if (id != null)
             {
-                return NotFound();
-            }
+                var result = _customersService.GetCustomerById(id.Value);
 
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer == null)
+                return View(result);
+            }
+            else
             {
                 return NotFound();
             }
-            return View(customer);
         }
 
         // POST: Customers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CustomerId,CustomerTitle,CustomerName,CustomerSurname,CellPhone")] Customer customer)
@@ -99,22 +88,7 @@ namespace Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(customer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CustomerExists(customer.CustomerId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _customersService.UpdateCustomer(customer);
                 return RedirectToAction(nameof(Index));
             }
             return View(customer);
@@ -123,19 +97,16 @@ namespace Controllers
         // GET: Customers/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Customers == null)
+            if (id != null)
+            {
+                var result = _customersService.GetCustomerById(id.Value);
+
+                return View(result);
+            }
+            else
             {
                 return NotFound();
             }
-
-            var customer = await _context.Customers
-                .FirstOrDefaultAsync(m => m.CustomerId == id);
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return View(customer);
         }
 
         // POST: Customers/Delete/5
@@ -143,23 +114,14 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Customers == null)
-            {
-                return Problem("Entity set 'SuperStoreContext.Customers'  is null.");
-            }
-            var customer = await _context.Customers.FindAsync(id);
-            if (customer != null)
-            {
-                _context.Customers.Remove(customer);
-            }
-
-            await _context.SaveChangesAsync();
+            var product = _customersService.GetCustomerById(id);
+            _customersService.DeleteCustomer(product);
             return RedirectToAction(nameof(Index));
         }
 
         private bool CustomerExists(int id)
         {
-            return (_context.Customers?.Any(e => e.CustomerId == id)).GetValueOrDefault();
+            return _customersService.GetAllCustomers().Any(e => e.CustomerId == id);
         }
     }
 }

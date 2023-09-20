@@ -8,43 +8,42 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Data;
 using Models;
+using EcoPower_Logistics.Repository;
+using EcoPower_Logistics.Services; 
 
 namespace Controllers
 {
     [Authorize]
     public class ProductsController : Controller
     {
-        private readonly SuperStoreContext _context;
-
-        public ProductsController(SuperStoreContext context)
+        //Declares the service that will be used by the controller
+        private readonly IProductsService _productsService;
+        
+        //Constructor that will be used to inject the service into the controller
+        public ProductsController(IProductsService productsService)
         {
-            _context = context;
+            this._productsService = productsService;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            return _context.Products != null ?
-                        View(await _context.Products.ToListAsync()) :
-                        Problem("Entity set 'SuperStoreContext.Products'  is null.");
+            return View(_productsService.GetAllProducts().ToList());
         }
 
         // GET: Products/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Products == null)
+            if (id != null)
+            {
+                var result = _productsService.GetProductById(id.Value);
+
+                return View(result);
+            }
+            else
             {
                 return NotFound();
             }
-
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
         }
 
         // GET: Products/Create
@@ -54,40 +53,30 @@ namespace Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDescription,UnitsInStock")] Product product)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(product);
+            _productsService.AddProduct(product);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Products == null)
+            if (id != null)
             {
-                return NotFound();
-            }
+                var result = _productsService.GetProductById(id.Value);
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
+                return View(result);
+            }
+            else
             {
                 return NotFound();
             }
-            return View(product);
         }
 
         // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,ProductDescription,UnitsInStock")] Product product)
@@ -99,22 +88,7 @@ namespace Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.ProductId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _productsService.UpdateProduct(product);
                 return RedirectToAction(nameof(Index));
             }
             return View(product);
@@ -123,19 +97,16 @@ namespace Controllers
         // GET: Products/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Products == null)
+            if (id != null)
+            {
+                var result = _productsService.GetProductById(id.Value);
+
+                return View(result);
+            }
+            else
             {
                 return NotFound();
             }
-
-            var product = await _context.Products
-                .FirstOrDefaultAsync(m => m.ProductId == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
         }
 
         // POST: Products/Delete/5
@@ -143,23 +114,14 @@ namespace Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Products == null)
-            {
-                return Problem("Entity set 'SuperStoreContext.Products'  is null.");
-            }
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-
-            await _context.SaveChangesAsync();
+            var product = _productsService.GetProductById(id);
+            _productsService.DeleteProduct(product);
             return RedirectToAction(nameof(Index));
         }
 
         private bool ProductExists(int id)
         {
-            return (_context.Products?.Any(e => e.ProductId == id)).GetValueOrDefault();
+            return _productsService.GetAllProducts().Any(e => e.ProductId == id);
         }
     }
 }
