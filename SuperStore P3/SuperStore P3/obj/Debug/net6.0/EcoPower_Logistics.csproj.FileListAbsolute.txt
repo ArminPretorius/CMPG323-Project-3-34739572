@@ -285,7 +285,6 @@ C:\Users\Jacqui.Muller\Downloads\SuperStore P3\SuperStore P3\SuperStore P3\obj\D
 C:\Users\Jacqui.Muller\Downloads\SuperStore P3\SuperStore P3\SuperStore P3\obj\Debug\net6.0\EcoPower_Logistics.genruntimeconfig.cache
 C:\Users\Jacqui.Muller\Downloads\SuperStore P3\SuperStore P3\SuperStore P3\obj\Debug\net6.0\ref\EcoPower_Logistics.dll
 C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperStore P3\bin\Debug\net6.0\appsettings.Development.json
-C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperStore P3\bin\Debug\net6.0\appsettings.json
 C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperStore P3\bin\Debug\net6.0\EcoPower_Logistics.staticwebassets.runtime.json
 C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperStore P3\bin\Debug\net6.0\EcoPower_Logistics.exe
 C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperStore P3\bin\Debug\net6.0\EcoPower_Logistics.deps.json
@@ -570,3 +569,4 @@ C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperSt
 C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperStore P3\obj\Debug\net6.0\EcoPower_Logistics.pdb
 C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperStore P3\obj\Debug\net6.0\EcoPower_Logistics.genruntimeconfig.cache
 C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperStore P3\obj\Debug\net6.0\ref\EcoPower_Logistics.dll
+C:\Users\armin\Documents\GitHub\CMPG323-Project-3-34739572\SuperStore P3\SuperStore P3\bin\Debug\net6.0\appsettings.json

@@ -5,10 +5,13 @@ using System.Linq;
 
 namespace EcoPower_Logistics.Repository
 {
+    //Generic repository class that will be used by all repositories
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
+        //Declares the context that will be used by all repositories
         protected readonly SuperStoreContext _context = new SuperStoreContext();
 
+        //Generic repository methods that will be used by all repositories
         public IEnumerable<T> GetAll()
         {
             try

@@ -16,8 +16,10 @@ namespace Controllers
     [Authorize]
     public class ProductsController : Controller
     {
+        //Declares the service that will be used by the controller
         private readonly IProductsService _productsService;
-
+        
+        //Constructor that will be used to inject the service into the controller
         public ProductsController(IProductsService productsService)
         {
             this._productsService = productsService;
@@ -51,8 +53,6 @@ namespace Controllers
         }
 
         // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDescription,UnitsInStock")] Product product)
@@ -77,8 +77,6 @@ namespace Controllers
         }
 
         // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,ProductDescription,UnitsInStock")] Product product)

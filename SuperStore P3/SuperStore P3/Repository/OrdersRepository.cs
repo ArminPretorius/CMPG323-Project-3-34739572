@@ -3,6 +3,7 @@ using Models;
 
 namespace EcoPower_Logistics.Repository
 {
+    //Orders repository that will be used to interact with the database
     public class OrdersRepository : GenericRepository<Order>, IOrdersRepository
     {
         public IEnumerable<Order> GetAllOrders()

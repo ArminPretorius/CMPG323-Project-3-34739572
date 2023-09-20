@@ -16,10 +16,11 @@ namespace Controllers
     [Authorize]
     public class OrdersController : Controller
     {
+        //Declares the service that will be used by the controller
         private readonly IOrdersService _ordersService;
         private readonly ICustomersService _customersService;
-        private readonly IProductsService _productsService;
 
+        //Constructor that will be used to inject the service into the controller
         public OrdersController(IOrdersService ordersService, ICustomersService customersService)
         {
             this._ordersService = ordersService;
@@ -57,8 +58,6 @@ namespace Controllers
         }
 
         // POST: Orders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("OrderId,OrderDate,CustomerId,DeliveryAddress")] Order order)
@@ -86,8 +85,6 @@ namespace Controllers
         }
 
         // POST: Orders/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("OrderId,OrderDate,CustomerId,DeliveryAddress")] Order order)

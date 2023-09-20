@@ -5,6 +5,7 @@ using Models;
 
 namespace EcoPower_Logistics.Repository
 {
+    //Products repository that will be used to interact with the database
     public class ProductsRepository : GenericRepository<Product>, IProductsRepository
     {
         public IEnumerable<Product> GetAllProducts()

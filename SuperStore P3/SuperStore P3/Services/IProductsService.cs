@@ -2,6 +2,7 @@
 
 namespace EcoPower_Logistics.Services
 {
+    //Products interface that will be used by the products repository
     public interface IProductsService
     {
         IEnumerable<Product> GetAllProducts();

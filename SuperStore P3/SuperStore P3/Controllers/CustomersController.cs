@@ -16,8 +16,10 @@ namespace Controllers
     [Authorize]
     public class CustomersController : Controller
     {
+        //Declares the service that will be used by the controller
         private readonly ICustomersService _customersService;
 
+        //Constructor that will be used to inject the service into the controller
         public CustomersController(ICustomersService customersService)
         {
             this._customersService = customersService;
@@ -51,8 +53,6 @@ namespace Controllers
         }
 
         // POST: Customers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CustomerId,CustomerTitle,CustomerName,CustomerSurname,CellPhone")] Customer customer)
@@ -77,8 +77,6 @@ namespace Controllers
         }
 
         // POST: Customers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CustomerId,CustomerTitle,CustomerName,CustomerSurname,CellPhone")] Customer customer)

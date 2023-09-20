@@ -3,6 +3,7 @@ using EcoPower_Logistics.Repository;
 
 namespace EcoPower_Logistics.Services
 {
+    //Customers service that will be used by the customers controller
     public class CustomersService : ICustomersService
     {
         private readonly ICustomersRepository _customersRepository;

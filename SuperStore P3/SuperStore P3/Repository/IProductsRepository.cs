@@ -2,6 +2,7 @@
 
 namespace EcoPower_Logistics.Repository
 {
+    //Products interface that will be used by the products repository
     public interface IProductsRepository : IGenericRepository<Product>
     {
         IEnumerable<Product> GetAllProducts();

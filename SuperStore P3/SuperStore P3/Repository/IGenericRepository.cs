@@ -2,6 +2,7 @@
 
 namespace EcoPower_Logistics.Repository
 {
+    //Generic repository interface that will be used by all repositories
     public interface IGenericRepository<T> where T : class
     {
         IEnumerable<T> GetAll();

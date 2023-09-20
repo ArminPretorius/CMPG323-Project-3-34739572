@@ -3,6 +3,7 @@ using Models;
 
 namespace EcoPower_Logistics.Services
 {
+    //Products service that will be used by the products controller
     public class ProductsService : IProductsService
     {
         private readonly IProductsRepository _productsRepository;

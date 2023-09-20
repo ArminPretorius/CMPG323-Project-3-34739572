@@ -2,6 +2,7 @@
 
 namespace EcoPower_Logistics.Repository
 {
+    //Orders interface that will be used by the orders repository
     public interface IOrdersRepository : IGenericRepository<Order>
     {
         IEnumerable<Order> GetAllOrders();
