@@ -19,12 +19,14 @@ namespace Controllers
         //Declares the service that will be used by the controller
         private readonly IOrdersService _ordersService;
         private readonly ICustomersService _customersService;
+        private readonly IProductsService _productsService;
 
         //Constructor that will be used to inject the service into the controller
-        public OrdersController(IOrdersService ordersService, ICustomersService customersService)
+        public OrdersController(IOrdersService ordersService, ICustomersService customersService, IProductsService productsService)
         {
             this._ordersService = ordersService;
             this._customersService = customersService;
+            this._productsService = productsService;
         }
 
         // GET: Orders
